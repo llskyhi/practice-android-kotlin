@@ -50,14 +50,14 @@ class Main2Activity : AppCompatActivity() {
             alertDialog.show()
         }
 
-        numberGuessGameViewModel.minSecretNumber.observe(this) { minSecretNumber ->
-            val maxSecretNumber = numberGuessGameViewModel.maxSecretNumber.value
+        numberGuessGameViewModel.rangeHintMin.observe(this) { minSecretNumber ->
+            val maxSecretNumber = numberGuessGameViewModel.rangeHintMax.value
             binding.guessNumberInput.hint =
                 getString(R.string.guess_number_input_hint, minSecretNumber, maxSecretNumber)
         }
 
-        numberGuessGameViewModel.maxSecretNumber.observe(this) { maxSecretNumber ->
-            val minSecretNumber = numberGuessGameViewModel.minSecretNumber.value
+        numberGuessGameViewModel.rangeHintMax.observe(this) { maxSecretNumber ->
+            val minSecretNumber = numberGuessGameViewModel.rangeHintMin.value
             binding.guessNumberInput.hint =
                 getString(R.string.guess_number_input_hint, minSecretNumber, maxSecretNumber)
         }

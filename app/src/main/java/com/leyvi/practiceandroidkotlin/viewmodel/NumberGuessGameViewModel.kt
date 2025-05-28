@@ -12,27 +12,36 @@ class NumberGuessGameViewModel: ViewModel() {
     private val _secretNumber = MutableLiveData<Int>()
     private val _gameStatus = MutableLiveData<Status>()
     private val _guessCounter = MutableLiveData<Int>()
+    private val _rangeHintMin = MutableLiveData<Int>(numberGuessGame.rangeHintMin)
+    private val _rangeHintMax = MutableLiveData<Int>(numberGuessGame.rangeHintMax)
 
-    val minSecretNumber: LiveData<Int> = MutableLiveData(numberGuessGame.minSecretNumber)
-    val maxSecretNumber: LiveData<Int> = MutableLiveData(numberGuessGame.maxSecretNumber)
     val secretNumber: LiveData<Int> = _secretNumber
     val gameStatus: LiveData<Status> = _gameStatus
     val guessCounter: LiveData<Int> = _guessCounter
+    val rangeHintMin: LiveData<Int> = _rangeHintMin
+    val rangeHintMax: LiveData<Int> = _rangeHintMax
 
     init {
-        _secretNumber.value = numberGuessGame.secretNumber
-        _guessCounter.value = numberGuessGame.guessCounter
+        reset()
     }
 
     fun guess(number: Int) {
         _gameStatus.value = numberGuessGame.guess(number)
         _guessCounter.value = numberGuessGame.guessCounter
+        _rangeHintMin.value = numberGuessGame.rangeHintMin
+        _rangeHintMax.value = numberGuessGame.rangeHintMax
     }
 
     fun restart() {
         numberGuessGame.reset()
-        _secretNumber.value = numberGuessGame.secretNumber
+        reset()
+    }
+
+    private fun reset() {
         _gameStatus.value = Status.INIT
-        _guessCounter.value = 0
+        _secretNumber.value = numberGuessGame.secretNumber
+        _guessCounter.value = numberGuessGame.guessCounter
+        _rangeHintMin.value = numberGuessGame.rangeHintMin
+        _rangeHintMax.value = numberGuessGame.rangeHintMax
     }
 }
