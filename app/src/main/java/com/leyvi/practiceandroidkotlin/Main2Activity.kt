@@ -31,18 +31,19 @@ class Main2Activity : AppCompatActivity() {
                 return@observe
             }
 
-            val alertDialog = AlertDialog.Builder(this).setTitle("Result")
+            val alertDialog = AlertDialog.Builder(this)
+                .setTitle(getString(R.string.number_guess_game_result_title))
             when (status) {
-                NumberGuessGame.Status.BINGO -> alertDialog.setMessage("Bingo!")
-                    .setPositiveButton("Restart") { _, _ -> numberGuessGameViewModel.restart() }
+                NumberGuessGame.Status.BINGO -> alertDialog.setMessage(getString(R.string.number_guess_result_message_bingo))
+                    .setPositiveButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
 
-                NumberGuessGame.Status.TOO_BIG -> alertDialog.setMessage("Too big! Try again.")
-                    .setPositiveButton("OK", null)
-                    .setNeutralButton("Restart") { _, _ -> numberGuessGameViewModel.restart() }
+                NumberGuessGame.Status.TOO_BIG -> alertDialog.setMessage(getString(R.string.number_guess_game_result_message_too_big))
+                    .setPositiveButton(getString(R.string.alert_dialog_positive_button), null)
+                    .setNeutralButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
 
-                NumberGuessGame.Status.TOO_SMALL -> alertDialog.setMessage("Too small! Try again.")
-                    .setPositiveButton("OK", null)
-                    .setNeutralButton("Restart") { _, _ -> numberGuessGameViewModel.restart() }
+                NumberGuessGame.Status.TOO_SMALL -> alertDialog.setMessage(getString(R.string.number_guess_game_result_message_too_small))
+                    .setPositiveButton(getString(R.string.alert_dialog_positive_button), null)
+                    .setNeutralButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
 
                 else -> {}
             }
@@ -51,16 +52,22 @@ class Main2Activity : AppCompatActivity() {
 
         numberGuessGameViewModel.minSecretNumber.observe(this) { minSecretNumber ->
             val maxSecretNumber = numberGuessGameViewModel.maxSecretNumber.value
-            binding.guessNumberInput.hint = "Enter a number ($minSecretNumber ~ $maxSecretNumber)"
+            binding.guessNumberInput.hint =
+                getString(R.string.guess_number_input_hint, minSecretNumber, maxSecretNumber)
         }
 
         numberGuessGameViewModel.maxSecretNumber.observe(this) { maxSecretNumber ->
             val minSecretNumber = numberGuessGameViewModel.minSecretNumber.value
-            binding.guessNumberInput.hint = "Enter a number ($minSecretNumber ~ $maxSecretNumber)"
+            binding.guessNumberInput.hint =
+                getString(R.string.guess_number_input_hint, minSecretNumber, maxSecretNumber)
         }
 
         numberGuessGameViewModel.secretNumber.observe(this) { secretNumber ->
-            Toast.makeText(this, "Shhh! The answer is $secretNumber", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.number_guess_cheating_whisper, secretNumber),
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
 //        binding.guessButton.setOnClickListener(this::onGuessButtonClicked)
@@ -69,7 +76,8 @@ class Main2Activity : AppCompatActivity() {
     fun onGuessButtonClicked(view: View) {
         val guessNumber = binding.guessNumberInput.text.toString().toIntOrNull()
         if (guessNumber == null) {
-            Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,
+                getString(R.string.number_guess_game_invalid_guess_hint), Toast.LENGTH_SHORT).show()
         } else {
             numberGuessGameViewModel.guess(guessNumber)
         }
