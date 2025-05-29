@@ -6,13 +6,13 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.leyvi.practiceandroidkotlin.databinding.ActivityMain2Binding
+import com.leyvi.practiceandroidkotlin.databinding.ActivityNumberGuessGameBinding
 import com.leyvi.practiceandroidkotlin.game.NumberGuessGame
 import com.leyvi.practiceandroidkotlin.viewmodel.NumberGuessGameViewModel
 
-class Main2Activity : AppCompatActivity() {
-    private val binding: ActivityMain2Binding by lazy {
-        ActivityMain2Binding.inflate(layoutInflater)
+class NumberGuessGameActivity : AppCompatActivity() {
+    private val binding: ActivityNumberGuessGameBinding by lazy {
+        ActivityNumberGuessGameBinding.inflate(layoutInflater)
     }
     private val numberGuessGameViewModel = NumberGuessGameViewModel()
 
@@ -76,8 +76,10 @@ class Main2Activity : AppCompatActivity() {
     fun onGuessButtonClicked(view: View) {
         val guessNumber = binding.guessNumberInput.text.toString().toIntOrNull()
         if (guessNumber == null) {
-            Toast.makeText(this,
-                getString(R.string.number_guess_game_invalid_guess_hint), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.number_guess_game_invalid_guess_hint), Toast.LENGTH_SHORT
+            ).show()
         } else {
             numberGuessGameViewModel.guess(guessNumber)
         }
