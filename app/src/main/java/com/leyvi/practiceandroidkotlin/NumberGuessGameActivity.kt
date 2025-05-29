@@ -1,9 +1,12 @@
 package com.leyvi.practiceandroidkotlin
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.leyvi.practiceandroidkotlin.databinding.ActivityNumberGuessGameBinding
@@ -11,10 +14,38 @@ import com.leyvi.practiceandroidkotlin.game.NumberGuessGame
 import com.leyvi.practiceandroidkotlin.viewmodel.NumberGuessGameViewModel
 
 class NumberGuessGameActivity : AppCompatActivity() {
+    companion object {
+        const val INTENT_EXTRA_MIN_SECRET_NUMBER = "minSecretNumber"
+        const val INTENT_EXTRA_MAX_SECRET_NUMBER = "maxSecretNumber"
+    }
+
+    private val TAG: String = this::class.java.simpleName
+
     private val binding: ActivityNumberGuessGameBinding by lazy {
         ActivityNumberGuessGameBinding.inflate(layoutInflater)
     }
     private val numberGuessGameViewModel = NumberGuessGameViewModel()
+
+    private val setNumberRangeActivityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            Log.d(TAG, "onCreate: activityResult code: ${activityResult.resultCode}")
+            if (activityResult.resultCode != RESULT_OK) {
+                return@registerForActivityResult
+            }
+            val minSecretNumber =
+                activityResult.data?.getIntExtra(INTENT_EXTRA_MIN_SECRET_NUMBER, 1)
+            val maxSecretNumber =
+                activityResult.data?.getIntExtra(INTENT_EXTRA_MAX_SECRET_NUMBER, 100)
+            Log.d(
+                TAG,
+                "onCreate: minSecretNumber: $minSecretNumber, maxSecretNumber: $maxSecretNumber"
+            )
+            if (minSecretNumber == null || maxSecretNumber == null) {
+                Log.w(TAG, "onCreate: received invalid range from activity result")
+                return@registerForActivityResult
+            }
+            numberGuessGameViewModel.setRange(minSecretNumber, maxSecretNumber)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +100,6 @@ class NumberGuessGameActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-//        binding.guessButton.setOnClickListener(this::onGuessButtonClicked)
     }
 
     fun onGuessButtonClicked(view: View) {
@@ -84,5 +113,22 @@ class NumberGuessGameActivity : AppCompatActivity() {
             numberGuessGameViewModel.guess(guessNumber)
         }
         binding.guessNumberInput.text.clear()
+    }
+
+    fun onSettingsButtonClicked(view: View) {
+        Log.d(
+            TAG, "onSettingsButtonClicked: going to configure settings: ${
+                mapOf(
+                    INTENT_EXTRA_MIN_SECRET_NUMBER to numberGuessGameViewModel.minSecretNumber,
+                    INTENT_EXTRA_MAX_SECRET_NUMBER to numberGuessGameViewModel.maxSecretNumber,
+                )
+            }"
+        )
+        Intent(this, NumberGuessGameSettingActivity::class.java).apply {
+            putExtra(INTENT_EXTRA_MIN_SECRET_NUMBER, numberGuessGameViewModel.minSecretNumber)
+            putExtra(INTENT_EXTRA_MAX_SECRET_NUMBER, numberGuessGameViewModel.maxSecretNumber)
+        }.also {
+            setNumberRangeActivityResultLauncher.launch(it)
+        }
     }
 }

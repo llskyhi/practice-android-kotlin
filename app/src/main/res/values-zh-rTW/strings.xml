@@ -14,4 +14,9 @@
     <string name="alert_dialog_positive_button">OK</string>
     <string name="number_guess_cheating_whisper">噓...答案是 %1$d</string>
     <string name="number_guess_game_invalid_guess_hint">請輸入數字</string>
+    <string name="settings_button">設定..</string>
+    <string name="number_guess_game_invalid_settings">無效設定</string>
+    <string name="number_guess_game_save_button">儲存</string>
+    <string name="number_guess_game_settings_secret_number_range_inclusive_max_label">最大值</string>
+    <string name="number_guess_game_settings_secret_number_range_inclusive_min_label">最小值</string>
 </resources>

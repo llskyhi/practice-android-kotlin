@@ -5,16 +5,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.leyvi.practiceandroidkotlin.game.NumberGuessGame
 import com.leyvi.practiceandroidkotlin.game.NumberGuessGame.Status
+import com.leyvi.practiceandroidkotlin.model.NumberGuessGameSettings
 
-class NumberGuessGameViewModel: ViewModel() {
-    private val numberGuessGame = NumberGuessGame(maxSecretNumber = 100)
+class NumberGuessGameViewModel : ViewModel() {
+    private val numberGuessGameSettings = NumberGuessGameSettings()
+
+    private lateinit var numberGuessGame: NumberGuessGame
 
     private val _secretNumber = MutableLiveData<Int>()
     private val _gameStatus = MutableLiveData<Status>()
     private val _guessCounter = MutableLiveData<Int>()
-    private val _rangeHintMin = MutableLiveData<Int>(numberGuessGame.rangeHintMin)
-    private val _rangeHintMax = MutableLiveData<Int>(numberGuessGame.rangeHintMax)
+    private val _rangeHintMin = MutableLiveData<Int>()
+    private val _rangeHintMax = MutableLiveData<Int>()
 
+    val minSecretNumber: Int
+        get() = numberGuessGame.minSecretNumber
+    val maxSecretNumber: Int
+        get() = numberGuessGame.maxSecretNumber
     val secretNumber: LiveData<Int> = _secretNumber
     val gameStatus: LiveData<Status> = _gameStatus
     val guessCounter: LiveData<Int> = _guessCounter
@@ -22,7 +29,10 @@ class NumberGuessGameViewModel: ViewModel() {
     val rangeHintMax: LiveData<Int> = _rangeHintMax
 
     init {
-        reset()
+        setRange(
+            minSecretNumber = numberGuessGameSettings.minSecretNumber,
+            maxSecretNumber = numberGuessGameSettings.maxSecretNumber,
+        )
     }
 
     fun guess(number: Int) {
@@ -34,6 +44,14 @@ class NumberGuessGameViewModel: ViewModel() {
 
     fun restart() {
         numberGuessGame.reset()
+        reset()
+    }
+
+    fun setRange(minSecretNumber: Int, maxSecretNumber: Int) {
+        numberGuessGame = NumberGuessGame(
+            minSecretNumber = minSecretNumber,
+            maxSecretNumber = maxSecretNumber
+        )
         reset()
     }
 

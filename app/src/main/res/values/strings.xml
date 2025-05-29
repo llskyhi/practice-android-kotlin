@@ -13,4 +13,9 @@
     <string name="alert_dialog_positive_button">OK</string>
     <string name="number_guess_cheating_whisper">shhh! The answer is %1$d</string>
     <string name="number_guess_game_invalid_guess_hint">Please enter a valid number</string>
+    <string name="settings_button">Settings..</string>
+    <string name="number_guess_game_invalid_settings">Invalid settings</string>
+    <string name="number_guess_game_save_button">Save</string>
+    <string name="number_guess_game_settings_secret_number_range_inclusive_max_label">Max</string>
+    <string name="number_guess_game_settings_secret_number_range_inclusive_min_label">Min</string>
 </resources>
