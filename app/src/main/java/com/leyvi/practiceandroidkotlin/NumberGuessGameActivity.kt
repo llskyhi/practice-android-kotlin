@@ -24,7 +24,12 @@ class NumberGuessGameActivity : AppCompatActivity() {
     private val binding: ActivityNumberGuessGameBinding by lazy {
         ActivityNumberGuessGameBinding.inflate(layoutInflater)
     }
-    private val numberGuessGameViewModel = NumberGuessGameViewModel()
+    private val numberGuessGameViewModel by lazy {
+        ViewModelProvider(
+            this,
+            NumberGuessGameViewModel.NumberGuessGameViewModelFactory()
+        )[NumberGuessGameViewModel::class.java]
+    }
 
     private val setNumberRangeActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->

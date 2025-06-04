@@ -3,11 +3,23 @@ package com.leyvi.practiceandroidkotlin.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.leyvi.practiceandroidkotlin.game.NumberGuessGame
 import com.leyvi.practiceandroidkotlin.game.NumberGuessGame.Status
 import com.leyvi.practiceandroidkotlin.model.NumberGuessGameSettings
 
 class NumberGuessGameViewModel : ViewModel() {
+
+    class NumberGuessGameViewModelFactory : ViewModelProvider.Factory {
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(NumberGuessGameViewModel::class.java)) {
+                return NumberGuessGameViewModel() as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
+
     private val numberGuessGameSettings = NumberGuessGameSettings()
 
     private lateinit var numberGuessGame: NumberGuessGame
