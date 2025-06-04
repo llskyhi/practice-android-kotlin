@@ -1,37 +1,52 @@
 package com.leyvi.practice.androidkotlin
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.leyvi.practice.androidkotlin.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var todoListViewModel: TodoListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        todoListViewModel = ViewModelProvider(this)[TodoListViewModel::class.java]
 
         setSupportActionBar(binding.toolbar)
-
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .setAnchorView(R.id.fab).show()
+        }
+
+        binding.contentMain.buttonRefresh.setOnClickListener {
+            todoListViewModel.fetchTodos()
+        }
+
+        binding.contentMain.recyclerTodoItems.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            addItemDecoration(
+                DividerItemDecoration(
+                    binding.contentMain.recyclerTodoItems.context,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
+        }
+        todoListViewModel.todoItems.observe(this) { todoItems ->
+            binding.contentMain.recyclerTodoItems.adapter = TodoItemsAdapter(todoItems)
         }
     }
 
@@ -49,11 +64,5 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
     }
 }
