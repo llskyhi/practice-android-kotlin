@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -41,6 +42,10 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+    }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 }
 
