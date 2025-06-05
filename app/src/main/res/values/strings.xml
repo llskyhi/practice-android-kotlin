@@ -18,4 +18,5 @@
     <string name="number_guess_game_save_button">Save</string>
     <string name="number_guess_game_settings_secret_number_range_inclusive_max_label">Max</string>
     <string name="number_guess_game_settings_secret_number_range_inclusive_min_label">Min</string>
+    <string name="number_guess_game_result_row_secret_number_range_inclusive">%1$d ~ %2$d</string>
 </resources>

@@ -1,0 +1,55 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e8e77176c5b1e6b4c5b0ccd2986c5aec",
+    "entities": [
+      {
+        "tableName": "number_guess_game_result",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`min_secret_number` INTEGER NOT NULL, `max_secret_number` INTEGER NOT NULL, `guess_count` INTEGER NOT NULL, `created_at` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "minSecretNumber",
+            "columnName": "min_secret_number",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxSecretNumber",
+            "columnName": "max_secret_number",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "guessCount",
+            "columnName": "guess_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e8e77176c5b1e6b4c5b0ccd2986c5aec')"
+    ]
+  }
+}

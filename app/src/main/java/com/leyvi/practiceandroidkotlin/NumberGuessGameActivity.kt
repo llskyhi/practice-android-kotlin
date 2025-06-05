@@ -9,8 +9,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.leyvi.practiceandroidkotlin.database.NumberGuessGameResultDatabase
 import com.leyvi.practiceandroidkotlin.databinding.ActivityNumberGuessGameBinding
 import com.leyvi.practiceandroidkotlin.game.NumberGuessGame
+import com.leyvi.practiceandroidkotlin.repo.NumberGuessGameResultRepo
+import com.leyvi.practiceandroidkotlin.view.NumberGuessGameResultsAdapter
 import com.leyvi.practiceandroidkotlin.viewmodel.NumberGuessGameViewModel
 
 class NumberGuessGameActivity : AppCompatActivity() {
@@ -24,10 +29,18 @@ class NumberGuessGameActivity : AppCompatActivity() {
     private val binding: ActivityNumberGuessGameBinding by lazy {
         ActivityNumberGuessGameBinding.inflate(layoutInflater)
     }
+    private val numberGuessGameResultRepo by lazy {
+        NumberGuessGameResultRepo(
+            NumberGuessGameResultDatabase.getInstance(this)
+                .numberGuessGameResultDao(),
+        )
+    }
     private val numberGuessGameViewModel by lazy {
         ViewModelProvider(
             this,
-            NumberGuessGameViewModel.NumberGuessGameViewModelFactory()
+            NumberGuessGameViewModel.NumberGuessGameViewModelFactory(
+                numberGuessGameResultRepo,
+            )
         )[NumberGuessGameViewModel::class.java]
     }
 
@@ -58,44 +71,38 @@ class NumberGuessGameActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        numberGuessGameViewModel.guessCounter.observe(this) { counter ->
-            binding.guessCounter.text = counter.toString()
-        }
+        numberGuessGameViewModel.gameState.observe(this) { gameState ->
+            binding.guessCounter.text = gameState.guessCounter.toString()
 
-        numberGuessGameViewModel.gameStatus.observe(this) { status ->
-            if (status == NumberGuessGame.Status.INIT) {
-                return@observe
+            if (gameState.gameStatus != NumberGuessGame.Status.INIT) {
+                val alertDialog = AlertDialog.Builder(this@NumberGuessGameActivity)
+                    .setTitle(getString(R.string.number_guess_game_result_title))
+                    .setCancelable(false)
+                when (gameState.gameStatus) {
+                    NumberGuessGame.Status.BINGO -> {
+                        numberGuessGameViewModel.recordGameResult()
+                        alertDialog.setMessage(getString(R.string.number_guess_result_message_bingo))
+                            .setPositiveButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
+                    }
+
+                    NumberGuessGame.Status.TOO_BIG -> alertDialog.setMessage(getString(R.string.number_guess_game_result_message_too_big))
+                        .setPositiveButton(getString(R.string.alert_dialog_positive_button), null)
+                        .setNeutralButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
+
+                    NumberGuessGame.Status.TOO_SMALL -> alertDialog.setMessage(getString(R.string.number_guess_game_result_message_too_small))
+                        .setPositiveButton(getString(R.string.alert_dialog_positive_button), null)
+                        .setNeutralButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
+
+                    else -> {}
+                }
+                alertDialog.show()
             }
 
-            val alertDialog = AlertDialog.Builder(this)
-                .setTitle(getString(R.string.number_guess_game_result_title))
-            when (status) {
-                NumberGuessGame.Status.BINGO -> alertDialog.setMessage(getString(R.string.number_guess_result_message_bingo))
-                    .setPositiveButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
-
-                NumberGuessGame.Status.TOO_BIG -> alertDialog.setMessage(getString(R.string.number_guess_game_result_message_too_big))
-                    .setPositiveButton(getString(R.string.alert_dialog_positive_button), null)
-                    .setNeutralButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
-
-                NumberGuessGame.Status.TOO_SMALL -> alertDialog.setMessage(getString(R.string.number_guess_game_result_message_too_small))
-                    .setPositiveButton(getString(R.string.alert_dialog_positive_button), null)
-                    .setNeutralButton(getString(R.string.number_guess_restart_button)) { _, _ -> numberGuessGameViewModel.restart() }
-
-                else -> {}
-            }
-            alertDialog.show()
-        }
-
-        numberGuessGameViewModel.rangeHintMin.observe(this) { minSecretNumber ->
-            val maxSecretNumber = numberGuessGameViewModel.rangeHintMax.value
-            binding.guessNumberInput.hint =
-                getString(R.string.guess_number_input_hint, minSecretNumber, maxSecretNumber)
-        }
-
-        numberGuessGameViewModel.rangeHintMax.observe(this) { maxSecretNumber ->
-            val minSecretNumber = numberGuessGameViewModel.rangeHintMin.value
-            binding.guessNumberInput.hint =
-                getString(R.string.guess_number_input_hint, minSecretNumber, maxSecretNumber)
+            binding.guessNumberInput.hint = getString(
+                R.string.guess_number_input_hint,
+                gameState.rangeHintMin,
+                gameState.rangeHintMax,
+            )
         }
 
         numberGuessGameViewModel.secretNumber.observe(this) { secretNumber ->
@@ -104,6 +111,12 @@ class NumberGuessGameActivity : AppCompatActivity() {
                 getString(R.string.number_guess_cheating_whisper, secretNumber),
                 Toast.LENGTH_SHORT
             ).show()
+        }
+
+        binding.recyclerGameResults.layoutManager = LinearLayoutManager(this)
+        numberGuessGameViewModel.gameResults.observe(this) { gameResults ->
+            Log.d(TAG, "onCreate: game results updated: $gameResults")
+            binding.recyclerGameResults.adapter = NumberGuessGameResultsAdapter(gameResults)
         }
     }
 
