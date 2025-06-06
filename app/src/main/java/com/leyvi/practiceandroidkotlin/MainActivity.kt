@@ -1,47 +1,30 @@
 package com.leyvi.practiceandroidkotlin
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.leyvi.practiceandroidkotlin.ui.theme.AndroidKotlinPracticeTheme
+import com.leyvi.practiceandroidkotlin.databinding.ActivityAppEntryBinding
 
 class MainActivity : ComponentActivity() {
+    private val binding by lazy {
+        ActivityAppEntryBinding.inflate(layoutInflater)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            AndroidKotlinPracticeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
+
+        setContentView(binding.root)
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AndroidKotlinPracticeTheme {
-        Greeting("Android")
+    // TODO: change to use Navigation?
+    fun onNavButtonClick(view: View) {
+        when(view) {
+            binding.buttonNavToNumberGuessGame -> Intent(this, NumberGuessGameActivity::class.java)
+            else -> throw IllegalArgumentException("Unknown view: $view")
+        }.also {
+            startActivity(it)
+        }
     }
 }
