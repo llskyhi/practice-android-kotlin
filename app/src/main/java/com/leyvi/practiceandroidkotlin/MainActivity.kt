@@ -22,6 +22,7 @@ class MainActivity : ComponentActivity() {
     fun onNavButtonClick(view: View) {
         when(view) {
             binding.buttonNavToNumberGuessGame -> Intent(this, NumberGuessGameActivity::class.java)
+            binding.buttonNavToProfitCenterCrud -> Intent(this, ProfitCenterCrudActivity::class.java)
             else -> throw IllegalArgumentException("Unknown view: $view")
         }.also {
             startActivity(it)

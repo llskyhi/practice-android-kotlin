@@ -12,4 +12,12 @@
         android:layout_weight="0"
         android:onClick="onNavButtonClick"
         android:text="@string/nav_to_number_guess_game_button" />
+
+    <Button
+        android:id="@+id/button_nav_to_profit_center_crud"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:onClick="onNavButtonClick"
+        android:text="@string/nav_to_profit_center_crud_button" />
 </LinearLayout>
